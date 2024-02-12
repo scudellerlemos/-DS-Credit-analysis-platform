@@ -2,15 +2,28 @@
 
 1. [Introdução](#Plataforma-de-Análise-de-Crédito)
 2. [Características](#características)
-3. [Configuração](#configuração)
-4. [Instalação](#instalação)
+3. [Linguagens e Ferramentas](#Linguagens-e-Ferramentas)
+4. [Configuração](#configuração)
+5. [Instalação](#instalação)
     - [Instalação usando contêineres](#instalação-usando-contêineres)
     - [Instalação sem contêineres (EC2)](#instalação-sem-contêineres-ec2)
-5. [Contribuição](#contribuição)
+6. [Contribuição](#contribuição)
 
 # Plataforma de Análise de Crédito
 
 Esta aplicação Flask é uma plataforma de gerenciamento de modelos que realiza análises de crédito. Utiliza modelos de regressão linear, clusterização e classificação para predizer valores baseados em dados submetidos por um formulário.
+
+
+## Linguagens e Ferramentas
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Podman](https://img.shields.io/badge/Podman-2C2D72?style=for-the-badge&logo=podman&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![EC2](https://img.shields.io/badge/EC2-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)
+![BigQuery](https://img.shields.io/badge/BigQuery-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![GCP](https://img.shields.io/badge/GCP-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![FLASK](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+
 
 ## Características
 
