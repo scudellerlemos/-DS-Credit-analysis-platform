@@ -1,0 +1,14 @@
+#Iniciar o podman
+podman machine init
+
+#Ligar a maquina
+podman machine start
+
+#Definir para o podman ser executado com privilégios elevados
+podman machine set --rootful
+
+#Buildar a imagem
+podman build -t api_propensao_inadimplencia -f .\dockerfile
+
+#Rodar a imagem
+podman run -p 5001:5001 --name api_propensao_inadimplencia --rm api_propensao_inadimplencia

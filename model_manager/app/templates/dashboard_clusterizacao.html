@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datadrift - Clusterização</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static',  filename='css/style.css') }}"> 
+</head>
+<body>
+    <ul class="menu">
+        <li><a href="{{ MODEL_MANAGER_URL }}">Solicitação de Empréstimo</a></li>
+        <li><a href="#">Data Predict</a>
+            <ul class="submenu">
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_regressao_linear">Regressão Linear</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_clusterizacao">Clusterização</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_classificacao">Classificação</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="container">
+        <h1>Data Predict - Clusterização</h1>
+        
+        <!-- Filtros -->
+        <form id="filter-form">
+            <label for="income">Renda:</label>
+            <input type="number" id="income" name="income" value=""><br><br>
+
+            <label for="gender">Gênero:</label>
+            <select id="gender" name="gender">
+                <option value="">Selecione uma opção...</option>
+                <option value="0">Masculino</option>
+                <option value="2">Feminino</option>
+                <option value="1">Outros</option>
+                <option value="3">Prefiro não informar</option>
+            </select><br><br>
+
+            <label for="loan_limit">Limite do Empréstimo:</label>
+            <select id="loan_limit" name="loan_limit">
+                <option value="">Selecione uma opção...</option>
+                <option value="0">CF</option>
+                <option value="1">NCF</option>
+            </select><br><br>
+
+            <label for="loan_type">Tipo de Empréstimo:</label>
+            <select id="loan_type" name="loan_type">
+                <option value="">Selecione uma opção...</option>
+                <option value="2">Type 1</option>
+                <option value="0">Type 2</option>
+                <option value="1">Type 3</option>
+            </select><br><br>
+
+            <label for="loan_purpose">Finalidade do Empréstimo:</label>
+            <select id="loan_purpose" name="loan_purpose">
+                <option value="">Selecione uma opção...</option>
+                <option value="0">p1</option>
+                <option value="2">p2</option>
+                <option value="3">p3</option>
+                <option value="1">p4</option>
+            </select><br><br>
+
+            <label for="credit_worthiness">Solvabilidade:</label>
+            <select id="credit_worthiness" name="credit_worthiness">
+                <option value="">Selecione uma opção...</option>
+                <option value="0">l1</option>
+                <option value="1">l2</option>
+            </select><br><br>
+
+            <label for="open_credit">Crédito em Aberto:</label>
+            <select id="open_credit" name="open_credit">
+                <option value="">Selecione uma opção...</option>
+                <option value="1">Sim</option>
+                <option value="0">Não</option>
+            </select><br><br>
+
+            <div class="buttons-container">
+                <input type="submit" value="Filtrar" class="send-button">
+            </div>
+        </form>
+        
+        <div id="chart-container">
+            <canvas id="bar-chart"></canvas>
+        </div>
+
+        <!-- Tabela de detalhes -->
+        <h1>Detalhes dos Registros</h1>
+        <div class="detalhes-table-container"> <!-- Contêiner para a tabela de detalhes -->
+            <table id="detalhes-table" class="detalhes-table">
+                <thead>
+                    <tr>
+                        <th>Data de Cotação</th>
+                        <th>Método</th>
+                        <th>Nome do Cliente</th>
+                        <th>Limite do Empréstimo</th>
+                        <th>Gênero</th>
+                        <th>Tipo de Empréstimo</th>
+                        <th>Finalidade do Empréstimo</th>
+                        <th>Solvabilidade</th>
+                        <th>Crédito em Aberto</th>
+                        <th>Renda</th>
+                        <th>Valor Predito</th>
+                        <th>R2</th>
+                        <th>RMSE</th>
+                        <th>Empréstimo Aprovado</th>
+                    </tr>
+                </thead>
+                <tbody id="detalhes-body" class="detalhes-body">
+                    <!-- Aqui os detalhes serão inseridos dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Dados fictícios para exemplo
+        var dados = JSON.parse('{{ json_formatado|safe }}');
+
+        // Função para filtrar os dados com base nos filtros do formulário
+        function filtrarDados() {
+            var formData = new FormData(document.getElementById('filter-form'));
+            var filteredData = dados.filter(function(item) {
+                for (var [key, value] of formData.entries()) {
+                    if (value !== '' && String(item[key]) !== String(value)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+            return filteredData;
+        }
+
+        // Função para contar empréstimos aprovados e reprovados para cada cluster
+        function contarAprovadosReprovados(dados) {
+            var countAprovados = {1: 0, 2: 0, 3: 0, 4: 0};
+            var countReprovados = {1: 0, 2: 0, 3: 0, 4: 0};
+
+            dados.forEach(function(item) {
+                var categoria = item.valor_predito;
+                if (!isNaN(categoria) && categoria >= 1 && categoria <= 4) {
+                    if (item.emprestimo_aprovado === 1) {
+                        countAprovados[categoria]++;
+                    } else {
+                        countReprovados[categoria]++;
+                    }
+                }
+            });
+
+            return {aprovados: countAprovados, reprovados: countReprovados};
+        }
+
+        // Função para atualizar o gráfico com os dados filtrados
+        function atualizarGrafico() {
+            var filteredData = filtrarDados();
+            var count = contarAprovadosReprovados(filteredData);
+
+            var categorias = Object.keys(count.aprovados).map(Number); // Categorias únicas como números
+            var dadosAprovados = categorias.map(function(categoria) {
+                return count.aprovados[categoria] || 0;
+            });
+            var dadosReprovados = categorias.map(function(categoria) {
+                return count.reprovados[categoria] || 0;
+            });
+
+            var ctx = document.getElementById('bar-chart').getContext('2d');
+            if (window.barChart) {
+                window.barChart.destroy();
+            }
+            window.barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categorias.map(String),
+                    datasets: [{
+                        label: 'Empréstimos Aprovados',
+                        data: dadosAprovados,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Empréstimos Reprovados',
+                        data: dadosReprovados,
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quantidade de Empréstimos'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Cluster'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Função para adicionar os detalhes na tabela
+        function adicionarDetalhes(dados) {
+            var detalhesBody = document.getElementById('detalhes-body');
+
+            // Limpar o corpo da tabela
+            detalhesBody.innerHTML = '';
+
+            // Iterar sobre os dados e adicionar cada registro na tabela
+            dados.forEach(function(registro) {
+                var row = '<tr>';
+                row += '<td>' + registro.data_cotacao + '</td>';
+                row += '<td>' + registro.metodo + '</td>';
+                row += '<td>' + registro.nome_cliente + '</td>';
+                row += '<td>' + (registro.loan_limit === 0 ? 'CF' : 'NCF') + '</td>';
+                row += '<td>' + (registro.gender === 0 ? 'Masculino' : (registro.gender === 2 ? 'Feminino' : (registro.gender === 1 ? 'Outros' : 'Prefiro não informar'))) + '</td>';
+                row += '<td>' + (registro.loan_type === 2 ? 'Type 1' : (registro.loan_type === 0 ? 'Type 2' : 'Type 3')) + '</td>';
+                row += '<td>' + ('p' + registro.loan_purpose) + '</td>';
+                row += '<td>' + ('l' + registro.credit_worthiness) + '</td>';
+                row += '<td>' + (registro.open_credit === 1 ? 'Sim' : 'Não') + '</td>';
+                row += '<td>' + registro.income + '</td>';
+                row += '<td>' + registro.valor_predito + '</td>';
+                row += '<td>' + registro.r2 + '</td>';
+                row += '<td>' + registro.rmse + '</td>';
+                row += '<td>' + (registro.emprestimo_aprovado === 1 ? 'Aprovado' : 'Reprovado') + '</td>';
+                row += '</tr>';
+                detalhesBody.innerHTML += row;
+            });
+        }
+
+        // Evento de submit do formulário de filtro
+        document.getElementById('filter-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            atualizarGrafico();
+            adicionarDetalhes(filtrarDados());
+        });
+
+        // Inicializar o gráfico com os dados completos ao carregar a página
+        atualizarGrafico();
+        adicionarDetalhes(dados);
+    </script>
+</body>
+</html>

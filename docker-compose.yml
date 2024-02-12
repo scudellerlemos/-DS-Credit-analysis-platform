@@ -1,0 +1,49 @@
+version: '3'
+services:
+  model-manager:
+    build:
+      context: ./model_manager/app
+      dockerfile: dockerfile
+    volumes:
+      - ./model_manager/app:/app
+    image: model-manager
+    ports:
+      - "5000:5000"
+
+  api_regressao_linear:
+    build:
+      context: ./regressao_linear/app
+      dockerfile: dockerfile
+    volumes:
+      - ./regressao_linear/app:/app
+    image: api_regressao_linear
+    ports:
+      - "5001:5001"
+
+  api_clusterizacao:
+    build:
+      context: ./clusterizacao/app
+      dockerfile: dockerfile
+    volumes:
+      - ./clusterizacao/app:/app
+    image: api_clusterizacao
+    ports:
+      - "5002:5002"
+
+  api_classificacao:
+    build:
+      context: ./classificacao/app
+      dockerfile: dockerfile
+    volumes:
+      - ./classificacao/app:/app
+    image: api_classificacao
+    ports:
+      - "5003:5003"
+
+  # db-analise-credito:
+  #   build:
+  #     context: ./database
+  #     dockerfile: dockerfile
+  #   image: db-analise-credito
+  #   ports:
+  #     - "5432:5432"

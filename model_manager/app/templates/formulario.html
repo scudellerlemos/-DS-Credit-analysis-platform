@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Solicitação de Empréstimo</title>
+    <link rel="stylesheet" href="{{ url_for('static',  filename='css/style.css') }}">   
+</head>
+<body>
+    <ul class="menu">
+        <li><a href="{{ MODEL_MANAGER_URL }}">Solicitação de Empréstimo</a></li>
+        <li><a href="#">Data Predict</a>
+            <ul class="submenu">
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_regressao_linear">Regressão Linear</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_clusterizacao">Clusterização</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_classificacao">Classificação</a></li>
+            </ul>
+        </li>
+    </ul>
+    
+    <div class="container">
+        <h2>Formulário de Solicitação de Empréstimo</h2>
+        <form action="/submit" method="post">
+            <input type="hidden" id="uuid_valor" name="uuid_valor" value="{{ uuid_valor }}">
+
+            <label for="nome">Nome do Cliente:</label>
+            <input type="text" id="nome" name="nome" value="{{ nome }}" required {% if valor_predito != 0 %} disabled {% endif %}>
+
+            <label for="income">Renda:</label>
+            <input type="number" id="income" name="income" value="{{ income }}" required {% if valor_predito != 0 %} disabled {% endif %}>
+
+            <label for="Gender">Genêro:</label>
+            <select id="Gender" name="Gender" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if Gender == "0" %} selected {% endif %}>Masculino</option>
+                <option value="2" {% if Gender == "2" %} selected {% endif %}>Feminino</option>
+                <option value="1" {% if Gender == "1" %} selected {% endif %}>Outros</option>
+                <option value="3" {% if Gender == "2" %} selected {% endif %}>Prefiro não informar</option>
+            </select>
+
+            <label for="loan_limit">Limite do Empréstimo:</label>
+            <select id="loan_limit" name="loan_limit" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if loan_limit == "0" %} selected {% endif %}>CF</option>
+                <option value="1" {% if loan_limit == "1" %} selected {% endif %}>NCF</option>
+            </select>
+
+            <label for="loan_type">Tipo de Empréstimo:</label>
+            <select id="loan_type" name="loan_type" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="2" {% if loan_type == "2" %} selected {% endif %}>Type 1</option>
+                <option value="0" {% if loan_type == "0" %} selected {% endif %}>Type 2</option>
+                <option value="1" {% if loan_type == "1" %} selected {% endif %}>Type 3</option>
+            </select>
+
+            <label for="loan_purpose">Finalidade do Empréstimo:</label>
+            <select id="loan_purpose" name="loan_purpose" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if loan_purpose == "0" %} selected {% endif %}>p1</option>
+                <option value="2" {% if loan_purpose == "3" %} selected {% endif %}>p2</option>
+                <option value="3" {% if loan_purpose == "2" %} selected {% endif %}>p3</option>
+                <option value="1" {% if loan_purpose == "1" %} selected {% endif %}>p4</option>
+            </select>
+
+            <label for="Credit_Worthiness">Solvabilidade:</label>
+            <select id="Credit_Worthiness" name="Credit_Worthiness" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="0" {% if Credit_Worthiness == "0" %} selected {% endif %}>l1</option>
+                <option value="1" {% if Credit_Worthiness == "1" %} selected {% endif %}>l2</option>
+            </select>
+
+            <label for="open_credit">Crédito em Aberto:</label>
+            <select id="open_credit" name="open_credit" required {% if valor_predito != 0 %} disabled {% endif %}>
+                <option value="">Selecione uma opção...</option>
+                <option value="1" {% if open_credit == "1" %} selected {% endif %}>Sim</option>
+                <option value="0" {% if open_credit == "0" %} selected {% endif %}>Não</option>
+            </select>
+
+            {% if valor_predito != 0 %}
+                <label for="valor_predito">Propensão a Inadimplência (%):</label>
+                <input type="text" id="valor_predito" name="valor_predito" class="{{ classe }}" value="{{ valor_predito }}" disabled>
+
+                <label>Cluster do Cliente (entre 1 e 4):</label>
+
+                <!-- Barra horizontal com graduações -->
+                <div class="barra">
+                    <div class="cluster" style="width: {{ cluster * 25 }}%;">{{ cluster }}</div>
+                </div>
+
+                <label for="classificado">Classificação do Cliente:</label>
+                <input type="text" id="classificado" name="classificado" value="{{ classificado }}" disabled>
+
+                <div class="buttons-container">
+                    <input type="submit" name="action" value="Aprovar" class="green-button">
+                    <input type="submit" name="action" value="Reprovar" class="red-button">
+                </div>
+            {% else %}           
+                <div class="buttons-container">
+                    <input type="submit" name="action" value="Enviar" class="send-button">
+                </div>
+            {% endif %}
+        </form>
+    </div>
+</body>
+</html>

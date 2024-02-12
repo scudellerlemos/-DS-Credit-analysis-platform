@@ -1,0 +1,16 @@
+#Iniciar o podman
+podman machine init
+
+#Ligar a maquina
+podman machine start
+
+#Definir para o podman ser executado com privilégios elevados
+podman machine set --rootful
+
+#Buildar as imagens
+podman build -t model-manager -f .\app\dockerfile
+podman build -t db-analise-credito -f .\db\dockerfile
+
+#Rodar a imagem
+podman run -p 5000:5000 --name model-manager --rm model-manager
+podman run -p 5432:5432 --name db-analise-credito --rm db-analise-credito

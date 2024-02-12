@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Solicitação de Empréstimo</title>
+    <link rel="stylesheet" href="{{ url_for('static',  filename='css/style.css') }}">   
+</head>
+<body>
+    <ul class="menu">
+        <li><a href="{{ MODEL_MANAGER_URL }}">Solicitação de Empréstimo</a></li>
+        <li><a href="#">Data Predict</a>
+            <ul class="submenu">
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_regressao_linear">Regressão Linear</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_clusterizacao">Clusterização</a></li>
+                <li><a href="{{ MODEL_MANAGER_URL }}/dashboard_classificacao">Classificação</a></li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="container">
+        {% if emprestimo_aprovado == 1 %}
+            <h2>Empréstimo APROVADO com sucesso!</h2>
+        {% else %}
+            <h2>Empréstimo REPROVADO com sucesso!</h2>
+        {% endif %}
+            <form action="/" method="get">
+            <div class="buttons-container">
+                <input type="submit" name="action" value="Inicio" class="send-button">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
