@@ -48,7 +48,7 @@ git clone https://github.com/scudellerlemos/-DS-Credit-analysis-platform
 
 2. Acesse o diretório do Model Manager
 ```bash
-cd plataforma_analise_credito/model_manager/app
+cd -DS-Credit-analysis-platform-main/model_manager/app
 ```
 
 3. Crie o ambiente virtual
