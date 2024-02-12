@@ -43,7 +43,7 @@ Para instalar a aplicação diretamente em uma instância EC2, siga os passos ab
 ## Instalação do Model Manager:
 1. Clone o repositório:
 ```bash
-git clone [https://github.com/fabiomarcelodesouza/plataforma_analise_credito](https://github.com/scudellerlemos/-DS-Credit-analysis-platform)
+git clone https://github.com/scudellerlemos/-DS-Credit-analysis-platform
 ```
 
 2. Acesse o diretório do Model Manager
