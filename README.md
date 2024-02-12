@@ -7,7 +7,6 @@
     - [Instalação usando contêineres](#instalação-usando-contêineres)
     - [Instalação sem contêineres (EC2)](#instalação-sem-contêineres-ec2)
 5. [Contribuição](#contribuição)
-6. [Licença](#licença)
 
 # Plataforma de Análise de Crédito
 
@@ -197,5 +196,8 @@ Contribuições são bem-vindas! Para contribuir:
 4. Faça Push para a Branch (git push origin feature/AmazingFeature).
 5. Abra um Pull Request.
 
-## Licença
-Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
+
+
+<div align="center">
+  <img src="https://media.tenor.com/jozmfqzHNEsAAAAC/bye-anime.gif"  width="498" height="278">
+</div>
